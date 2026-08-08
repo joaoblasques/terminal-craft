@@ -68,6 +68,29 @@ vim.cmd('syntax enable')
 vim.opt.list = true                  -- Show some invisible characters
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
+-- LSP: pyright for Python (go-to-definition, diagnostics)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'python',
+  callback = function(args)
+    vim.lsp.start({
+      name = 'pyright',
+      cmd = { 'pyright-langserver', '--stdio' },
+      root_dir = vim.fs.root(args.buf, { '.git', 'pyproject.toml', 'setup.py' }) or vim.fn.getcwd(),
+    })
+  end,
+})
+
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local opts = { buffer = args.buf }
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+  end,
+})
+
 -- Print a message to indicate the config has loaded
 print("Neovim configuration loaded!")
 

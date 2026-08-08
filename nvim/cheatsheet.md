@@ -52,6 +52,12 @@ Open in a new tab: `:tabnew ~/Dev/terminal-craft/nvim/cheatsheet.md`
 - `14@a` — replay macro `a` 14 times
 - `@@` — replay the last-used macro again
 
+## Search / replace
+- `:%s/old/new/g` — replace every `old` with `new` on every line in the file
+  (`%` = whole file, `s` = substitute, `g` = all matches per line, not just the first)
+- `:s/old/new/g` — same, but only the current line (no `%`)
+- `:%s/old/new/gc` — same as `:%s/old/new/g` but asks to confirm each match first
+
 ## Windows / splits
 - `:sp` — split horizontally (new split on top)
 - `:vsp` — split vertically (new split on left)
@@ -64,6 +70,21 @@ Open in a new tab: `:tabnew ~/Dev/terminal-craft/nvim/cheatsheet.md`
 - `:tabnew <path>` — open a file in a new tab
 - `gt` / `gT` — next / previous tab
 - `:tabclose` — close current tab
+
+## LSP (Python via pyright)
+Requires `pyright` on PATH (`npm install -g pyright`) — auto-attaches to any `.py`
+buffer via `init.lua`'s `FileType python` autocmd. No plugin manager needed; this is
+nvim's built-in `vim.lsp` client (0.10+).
+- `gd` — go to definition (jumps to where a function/class/variable is actually defined)
+- `K` — hover (shows type info / docstring for whatever's under the cursor)
+- `<leader>e` (space then `e`) — show the diagnostic under the cursor in a floating window
+- `]d` / `[d` — jump to next / previous diagnostic in the buffer
+- Diagnostics (errors/warnings) show as underlines + signcolumn markers automatically,
+  no keypress needed — e.g. calling a method that doesn't exist on an inferred type.
+- Scope note: pyright catches type/reference errors it can see in the code itself
+  (typo'd method names, wrong argument types). It does NOT catch logic bugs like "no
+  caller actually passes this parameter" — that requires tracing actual call sites,
+  which is a different (harder) problem than type-checking a single file.
 
 ## Mode indicator (Warp/tmux specific)
 - Cursor SHAPE is the real signal: thin bar = insert mode, solid block = normal mode.
