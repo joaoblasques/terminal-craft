@@ -349,7 +349,7 @@
   <span>2:nvim</span>
   <span class="spacer"></span>
   <a href="cheatsheets/tmux.html" style="color: var(--text-dim); text-decoration: none;">cheatsheets</a>
-  <span class="clock">10/10 lessons · 2026-08-08</span>
+  <span class="clock">10/10 + netrw · 2026-08-08</span>
 </div>
 
 <div class="wrap">
@@ -359,7 +359,7 @@
     <h1>Building <span class="accent">tmux</span> and <span class="accent">nvim</span> fluency, on purpose, for AI-coding work.</h1>
     <p class="sub">A hands-on record of seven lessons — drilled live, not just read about — aimed at one thing: less friction reviewing and steering AI-generated code, at the keyboard, without breaking flow.</p>
     <div class="meta">
-      <span class="chip done">10 / 10 lessons complete</span>
+      <span class="chip done">10 / 10 curriculum + 1 reinforcement</span>
       <span class="chip">eli5 teaching method</span>
       <span class="chip">2 days, real friction included</span>
     </div>
@@ -398,7 +398,7 @@
 
   <section class="block">
     <p class="eyebrow">The lessons</p>
-    <h2>All ten, including what went wrong along the way.</h2>
+    <h2>All ten, plus what came after.</h2>
 
     <div class="lessons">
 
@@ -539,6 +539,22 @@
           <div class="friction">
             <span class="flabel">Two ideas, correctly parked</span>
             Two reasonable scope-creep instincts came up mid-lesson — pruning long-unused apps, and migrating eligible apps to the package manager for consistency. Both got a real look (one confirmed a migration path actually existed) before being deliberately deferred as separate follow-ups, not bundled into the same sitting. Recognizing scope creep in the moment, even when the idea is good, is its own skill.
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">+1</span><h3>netrw (file browser)</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>You're in nvim editing a file and need to open a different file in a sibling directory, but you don't remember the exact filename. <code>:e &lt;path&gt;</code> has been the tool since Lesson 5 for opening files directly — what's the actual limitation when you don't know the filename?</p>
+          <p class="insight"><strong>Landed:</strong> <code>:e &lt;path&gt;</code> requires the filename already known and typed — no browsing. <code>:Ex</code> (<code>:Explore</code>) opens netrw's directory listing in the current window, and given <code>:sp</code>/<code>:vsp</code> from Lesson 5, netrw's split variants follow the same pattern: <code>:Sex</code> (horizontal) and <code>:Vex</code> (vertical). The honest final insight: netrw isn't a persistent panel — every invocation is a full buffer that replaces or splits the current view, so you see the tree or the code, never both continuously the way a real docked sidebar does.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Reach for a file-tree plugin the moment file-browsing comes up, even when a capable built-in already exists.</span>
+            <span class="tag senior">senior</span><span>Try the vanilla tool first, and name its actual limitation precisely — no persistent panel — instead of dismissing it or reflexively reaching for a plugin without feeling the real gap.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">Right pattern, wrong letters — and no hands-on drill yet</span>
+            First attempt at deriving netrw's split commands from <code>:sp</code>/<code>:vsp</code> got the pattern right (split + explore) but guessed the wrong actual letters — corrected directly to <code>:Sex</code>/<code>:Vex</code>. This lesson was also verbal/conceptual only: done remotely from a phone, so nothing was actually typed into a live nvim session. The derivation and comprehension landed, but the real hands-on drill — opening netrw, navigating, creating/renaming/deleting a scratch file — is still owed.
           </div>
         </div>
       </article>
