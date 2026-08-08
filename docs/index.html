@@ -349,7 +349,7 @@
   <span>2:nvim</span>
   <span class="spacer"></span>
   <a href="cheatsheets/tmux.html" style="color: var(--text-dim); text-decoration: none;">cheatsheets</a>
-  <span class="clock">9/10 lessons · 2026-08-08</span>
+  <span class="clock">10/10 lessons · 2026-08-08</span>
 </div>
 
 <div class="wrap">
@@ -359,7 +359,7 @@
     <h1>Building <span class="accent">tmux</span> and <span class="accent">nvim</span> fluency, on purpose, for AI-coding work.</h1>
     <p class="sub">A hands-on record of seven lessons — drilled live, not just read about — aimed at one thing: less friction reviewing and steering AI-generated code, at the keyboard, without breaking flow.</p>
     <div class="meta">
-      <span class="chip done">9 / 10 lessons complete</span>
+      <span class="chip done">10 / 10 lessons complete</span>
       <span class="chip">eli5 teaching method</span>
       <span class="chip">2 days, real friction included</span>
     </div>
@@ -398,7 +398,7 @@
 
   <section class="block">
     <p class="eyebrow">The lessons</p>
-    <h2>All nine so far, including what went wrong along the way.</h2>
+    <h2>All ten, including what went wrong along the way.</h2>
 
     <div class="lessons">
 
@@ -527,6 +527,22 @@
         </div>
       </article>
 
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">10</span><h3>Dotfiles as a migration system</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>Your laptop dies tomorrow. Dotfiles get you your editor config back — but every app and package installed over time isn't tracked anywhere. Could you actually list everything, right now?</p>
+          <p class="insight"><strong>Landed:</strong> A declarative, replayable file beats a name list every time — the same lesson as Lesson 6's search/replace, in a new domain. A package manager's own dump command captures formulae, casks, and taps as real install directives, not just names. But it has a hard blind spot: anything installed through the Mac App Store is structurally invisible to it. Running the App Store's own listing tool surfaced 30 real apps a package-manager-only approach would have silently missed entirely — including apps in daily use.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Treat "dotfiles" as just the config files themselves — gets you a familiar editor, not a working machine.</span>
+            <span class="tag senior">senior</span><span>Migration means covering everything a fresh machine needs, including an honest accounting of what has no automatable path at all, instead of pretending that category doesn't exist.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">Two ideas, correctly parked</span>
+            Two reasonable scope-creep instincts came up mid-lesson — pruning long-unused apps, and migrating eligible apps to the package manager for consistency. Both got a real look (one confirmed a migration path actually existed) before being deliberately deferred as separate follow-ups, not bundled into the same sitting. Recognizing scope creep in the moment, even when the idea is good, is its own skill.
+          </div>
+        </div>
+      </article>
+
     </div>
   </section>
 
@@ -554,18 +570,9 @@
   </section>
 
   <section class="block">
-    <p class="eyebrow">What's next</p>
-    <h2>One lesson left — dotfiles as a real migration system.</h2>
-    <p>Not just symlinked config files: a Brewfile capturing every formula and cask, <code>mas</code> for Mac App Store apps by ID, and a plain checklist only for the rare install with no package-manager path at all. The goal is standing up a brand new Mac fast, not just keeping one machine's config tidy.</p>
-    <div class="next-list">
-      <div class="next-item">
-        <span class="idx">10</span>
-        <div class="body">
-          <h4>Dotfiles as a Mac-to-Mac migration system</h4>
-          <p>Brewfile (formulae + casks), <code>mas</code>-cli for App Store apps, an APPS.md checklist for manual-only installs, plus shell/git config — real symlink strategy, what's version-controlled vs. machine-local, secrets handling.</p>
-        </div>
-      </div>
-    </div>
+    <p class="eyebrow">Status</p>
+    <h2>Curriculum complete. Reinforcement is the work now.</h2>
+    <p>All ten lessons are done, hands-on, including the parts that didn't go smoothly. There's no fixed count beyond this — the next addition only happens if a real gap surfaces from actually using tmux, nvim, or the migration system, the same way Lesson 3's biggest insight came from a detour nobody planned. Until then: use it, don't just remember it.</p>
   </section>
 
   <footer>

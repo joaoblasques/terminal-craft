@@ -66,3 +66,16 @@ structurally cannot see.
   (frequency + recency) and jumps via fuzzy match — `cd` has no memory, `zoxide` does
 - `jq '.path.to.field'` — parses actual JSON structure (objects/arrays/nesting) instead
   of matching text, so it survives minified/reformatted JSON that would break `grep`
+
+## Mac-to-Mac migration
+Three files, three sources of truth — full procedure in `MIGRATION.md`.
+- `brew bundle dump --force` — write every formula/cask/tap/vscode-extension/npm-global
+  to a `Brewfile`, as real reinstall directives (declarative, replayable — unlike
+  `brew list`'s name-only output)
+- `brew bundle install --file=Brewfile` — replay a Brewfile on a new machine
+- `mas list` — list installed Mac App Store apps (Homebrew structurally cannot see
+  these — different distribution channel entirely)
+- `mas install <app-id>` — reinstall by numeric App Store ID (the name alone doesn't
+  work — `mas help install` confirms the command takes `<app-id>`)
+- `APPS.md` — plain checklist for anything with NO package-manager path at all
+  (direct-download-only installs); kept honestly incomplete, filled in as noticed
