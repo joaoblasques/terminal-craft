@@ -1,6 +1,6 @@
 # tmux Cheatsheet (Terminal-Craft)
 
-Prefix key in this config is `C-a` (not tmux's default `C-b`) — see `tmux.conf`.
+Prefix key in this config is `C-a` (not tmux's default `C-b`) — see `~/.tmux.conf`.
 
 ## Sessions
 - `tmux new -s <name>` — create a new, named session
