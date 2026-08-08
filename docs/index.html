@@ -199,6 +199,14 @@
     margin-top: 1.4rem;
   }
   @media (max-width: 560px) { .phases { grid-template-columns: 1fr; } }
+  .cheatlinks {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1.4rem;
+  }
+  @media (max-width: 640px) { .cheatlinks { grid-template-columns: 1fr; } }
+  .cheatlinks .phase:hover { border-color: var(--accent); }
   .phase {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -340,6 +348,7 @@
   <span>1:tmux</span>
   <span>2:nvim</span>
   <span class="spacer"></span>
+  <a href="cheatsheets/tmux.html" style="color: var(--text-dim); text-decoration: none;">cheatsheets</a>
   <span class="clock">7/7 lessons · 2026-08-08</span>
 </div>
 
@@ -489,6 +498,29 @@
         </div>
       </article>
 
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">Reference</p>
+    <h2>Cheatsheets — the commands, without the story.</h2>
+    <p>Every keystroke from every lesson above, kept as living reference docs in the repo and updated as the curriculum grows.</p>
+    <div class="cheatlinks">
+      <a href="cheatsheets/tmux.html" class="phase" style="text-decoration: none; display: block;">
+        <div class="num">01</div>
+        <h3 style="color: var(--text);">tmux →</h3>
+        <p>Sessions, windows, panes, layouts.</p>
+      </a>
+      <a href="cheatsheets/nvim.html" class="phase" style="text-decoration: none; display: block;">
+        <div class="num">02</div>
+        <h3 style="color: var(--text);">nvim →</h3>
+        <p>Modes, motions, registers, macros, search/replace, LSP.</p>
+      </a>
+      <a href="cheatsheets/shell.html" class="phase" style="text-decoration: none; display: block;">
+        <div class="num">03</div>
+        <h3 style="color: var(--text);">Shell →</h3>
+        <p>History search, aliases, functions, PATH, config load order.</p>
+      </a>
     </div>
   </section>
 

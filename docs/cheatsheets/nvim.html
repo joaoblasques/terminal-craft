@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>nvim Cheatsheet — Terminal-Craft</title>
+<meta name="description" content="nvim reference: modes, motions, registers, macros, search/replace, LSP — Terminal-Craft.">
+<style>
+  :root {
+    --bg: #f4f5f7; --surface: #ffffff; --surface-2: #eceef2; --border: #d7dbe2;
+    --text: #1c2027; --text-dim: #4a5261; --muted: #7d8595;
+    --accent: #1f8f5c; --accent-dim: #dcf0e6; --amber: #a8650f; --amber-dim: #f7ead2;
+    --mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151a; --surface: #171b22; --surface-2: #1e232c; --border: #2a303c;
+      --text: #dbe1ea; --text-dim: #a9b2c2; --muted: #6b7688;
+      --accent: #5fd68a; --accent-dim: #1c3327; --amber: #e8a355; --amber-dim: #34281a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151a; --surface: #171b22; --surface-2: #1e232c; --border: #2a303c;
+    --text: #dbe1ea; --text-dim: #a9b2c2; --muted: #6b7688;
+    --accent: #5fd68a; --accent-dim: #1c3327; --amber: #e8a355; --amber-dim: #34281a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent-dim); color: var(--text); }
+  a { color: var(--accent); }
+  code { font-family: var(--mono); background: var(--surface-2); padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.88em; color: var(--text); border: 1px solid var(--border); }
+  pre { font-family: var(--mono); background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; padding: 0.8rem 1rem; font-size: 0.82rem; overflow-x: auto; margin: 0.7rem 0 0; }
+
+  .statusbar {
+    position: sticky; top: 0; z-index: 20; height: 34px; background: var(--surface-2);
+    border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1.2rem;
+    padding: 0 1rem; font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim);
+    overflow-x: auto; white-space: nowrap;
+  }
+  .statusbar .session { color: var(--bg); background: var(--accent); padding: 0.15rem 0.55rem; border-radius: 3px; font-weight: 700; text-decoration: none; }
+  .statusbar .sep { color: var(--muted); }
+  .statusbar a.crumb { color: var(--text-dim); text-decoration: none; }
+  .statusbar a.crumb:hover { color: var(--accent); }
+  .statusbar .spacer { flex: 1; }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 4rem; }
+
+  h1 { font-family: var(--mono); font-size: clamp(1.5rem, 4vw, 2rem); margin: 0 0 0.4rem; text-wrap: balance; }
+  .sub { color: var(--text-dim); margin: 0 0 2.4rem; font-size: 0.95rem; }
+
+  section { margin-bottom: 2rem; }
+  h2 {
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 0.9rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+  dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.55rem 1rem; align-items: baseline; }
+  dt { font-family: var(--mono); font-size: 0.86rem; white-space: nowrap; color: var(--text); }
+  dd { margin: 0; font-size: 0.9rem; color: var(--text-dim); }
+
+  .note {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.9rem 1.1rem; font-size: 0.88rem; color: var(--text-dim); margin-top: 0.9rem;
+  }
+  .note.warn { background: var(--amber-dim); border-color: color-mix(in srgb, var(--amber) 40%, transparent); }
+  .note .flabel { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--amber); display: block; margin-bottom: 0.4rem; }
+
+  footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+  footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <a href="../index.html" class="session">terminal-craft</a>
+  <span class="sep">/</span>
+  <span>cheatsheets</span>
+  <span class="sep">/</span>
+  <span style="color: var(--text);">nvim</span>
+  <span class="spacer"></span>
+  <a class="crumb" href="tmux.html">tmux →</a>
+  <a class="crumb" href="shell.html">shell →</a>
+</div>
+
+<div class="wrap">
+  <h1>nvim</h1>
+  <p class="sub">Vanilla nvim, no plugin manager — everything here is a built-in.</p>
+
+  <section>
+    <h2>Modes</h2>
+    <dl>
+      <dt><code>i</code></dt><dd>insert mode (bar cursor, typing = text)</dd>
+      <dt><code>A</code></dt><dd>insert at end of current line</dd>
+      <dt><code>a</code></dt><dd>insert after cursor</dd>
+      <dt><code>o</code> / <code>O</code></dt><dd>open new line below / above, enter insert mode</dd>
+      <dt><code>Esc</code></dt><dd>back to normal mode (block cursor, keys = commands)</dd>
+      <dt><code>u</code></dt><dd>undo last change</dd>
+      <dt><code>Ctrl-r</code></dt><dd>redo (undo the undo)</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Quitting / saving</h2>
+    <dl>
+      <dt><code>:w</code></dt><dd>save</dd>
+      <dt><code>:q</code></dt><dd>quit (fails if unsaved changes)</dd>
+      <dt><code>:q!</code></dt><dd>quit without saving (escape hatch)</dd>
+      <dt><code>:wq</code></dt><dd>save and quit</dd>
+      <dt><code>:x</code></dt><dd>save and quit only if there were changes</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>File paths</h2>
+    <dl>
+      <dt><code>:e &lt;path&gt;</code></dt><dd>open a file (replaces current buffer)</dd>
+      <dt><code>:tabnew &lt;path&gt;</code></dt><dd>open a file in a new tab</dd>
+      <dt><code>:sp &lt;path&gt;</code></dt><dd>open a file in a horizontal split</dd>
+      <dt><code>:vsp &lt;path&gt;</code></dt><dd>open a file in a vertical split</dd>
+    </dl>
+    <div class="note">Relative paths (<code>:e practice.py</code>) resolve against nvim's cwd, not your last-opened file or your shell prompt's visible dir — check with <code>:pwd</code>.</div>
+  </section>
+
+  <section>
+    <h2>Motions</h2>
+    <dl>
+      <dt><code>/pattern</code> + <code>n</code>/<code>N</code></dt><dd>search forward, next/previous match</dd>
+      <dt><code>?pattern</code></dt><dd>search backward</dd>
+      <dt><code>200G</code> or <code>:200</code></dt><dd>jump to line 200</dd>
+      <dt><code>gg</code> / <code>G</code></dt><dd>jump to first / last line</dd>
+      <dt><code>0</code> / <code>$</code></dt><dd>start / end of current line</dd>
+      <dt><code>w</code> / <code>b</code></dt><dd>jump forward / backward one word</dd>
+      <dt><code>dd</code></dt><dd>delete current line</dd>
+      <dt><code>dw</code></dt><dd>delete word</dd>
+      <dt><code>d$</code></dt><dd>delete to end of line</dd>
+      <dt><code>yy</code></dt><dd>yank (copy) current line</dd>
+      <dt><code>p</code> / <code>P</code></dt><dd>paste after / before cursor</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Registers</h2>
+    <dl>
+      <dt><code>"ayy</code></dt><dd>yank current line into register <code>a</code></dd>
+      <dt><code>"ap</code></dt><dd>paste register <code>a</code>'s contents</dd>
+    </dl>
+    <div class="note">Named registers <code>a</code>–<code>z</code> persist until overwritten; unnamed register <code>"</code> holds the most recent yank/delete regardless of a named register.</div>
+  </section>
+
+  <section>
+    <h2>Macros</h2>
+    <dl>
+      <dt><code>qa</code> ... <code>q</code></dt><dd>record keystrokes into register <code>a</code>, stop recording</dd>
+      <dt><code>@a</code></dt><dd>replay macro <code>a</code> once</dd>
+      <dt><code>14@a</code></dt><dd>replay macro <code>a</code> 14 times</dd>
+      <dt><code>@@</code></dt><dd>replay the last-used macro again</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Search / replace</h2>
+    <dl>
+      <dt><code>:%s/old/new/g</code></dt><dd>replace every match, whole file (<code>%</code> = whole file, <code>g</code> = all matches per line)</dd>
+      <dt><code>:s/old/new/g</code></dt><dd>same, but current line only</dd>
+      <dt><code>:%s/old/new/gc</code></dt><dd>same as the whole-file version, but confirm each match first</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Windows / splits</h2>
+    <dl>
+      <dt><code>:sp</code></dt><dd>split horizontally (new split on top)</dd>
+      <dt><code>:vsp</code></dt><dd>split vertically (new split on left)</dd>
+      <dt><code>Ctrl-w h/j/k/l</code></dt><dd>move focus to the split left/down/up/right</dd>
+      <dt><code>Ctrl-w w</code></dt><dd>cycle focus to the next split</dd>
+      <dt><code>Ctrl-w q</code></dt><dd>close the current split</dd>
+      <dt><code>Ctrl-w =</code></dt><dd>resize all splits to equal size</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Tabs</h2>
+    <dl>
+      <dt><code>:tabnew &lt;path&gt;</code></dt><dd>open a file in a new tab</dd>
+      <dt><code>gt</code> / <code>gT</code></dt><dd>next / previous tab</dd>
+      <dt><code>:tabclose</code></dt><dd>close current tab</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>LSP (Python via pyright)</h2>
+    <p style="color: var(--text-dim); font-size: 0.88rem; margin: 0 0 0.9rem;">Requires <code>pyright</code> on PATH (<code>npm install -g pyright</code>) — auto-attaches to any <code>.py</code> buffer via <code>init.lua</code>'s <code>FileType python</code> autocmd. No plugin manager needed; this is nvim's built-in <code>vim.lsp</code> client (0.10+).</p>
+    <dl>
+      <dt><code>gd</code></dt><dd>go to definition (jumps to where a symbol is actually defined)</dd>
+      <dt><code>K</code></dt><dd>hover (type info / docstring for whatever's under the cursor)</dd>
+      <dt><code>&lt;leader&gt;e</code></dt><dd>show the diagnostic under the cursor in a floating window (leader = space)</dd>
+      <dt><code>]d</code> / <code>[d</code></dt><dd>jump to next / previous diagnostic in the buffer</dd>
+    </dl>
+    <div class="note warn">
+      <span class="flabel">Scope boundary</span>
+      Pyright catches type/reference errors it can see in the code itself (typo'd method names, wrong argument types). It does NOT catch logic bugs like "no caller actually passes this parameter" — that requires tracing actual call sites, a different and harder problem than type-checking a single file.
+    </div>
+  </section>
+
+  <section>
+    <h2>Mode indicator (Warp/tmux specific)</h2>
+    <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Cursor SHAPE is the real signal: thin bar = insert mode, solid block = normal mode. The text status line at the bottom does not show a mode name in this setup — go by cursor shape, not status-line text.</p>
+  </section>
+
+  <footer>
+    <a href="../index.html">← back to terminal-craft</a> · source: <a href="https://github.com/joaoblasques/terminal-craft/blob/main/nvim/cheatsheet.md">nvim/cheatsheet.md</a>
+  </footer>
+</div>
+</body>
+</html>
