@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal-Craft — tmux &amp; nvim fluency for AI-coding work</title>
+<meta name="description" content="A hands-on log of building real tmux and nvim muscle memory for heavy AI-coding sessions — seven lessons, drilled live, friction included.">
+<style>
+  :root {
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --surface-2: #eceef2;
+    --border: #d7dbe2;
+    --text: #1c2027;
+    --text-dim: #4a5261;
+    --muted: #7d8595;
+    --accent: #1f8f5c;
+    --accent-dim: #dcf0e6;
+    --amber: #a8650f;
+    --amber-dim: #f7ead2;
+    --mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+    --status-h: 34px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151a;
+      --surface: #171b22;
+      --surface-2: #1e232c;
+      --border: #2a303c;
+      --text: #dbe1ea;
+      --text-dim: #a9b2c2;
+      --muted: #6b7688;
+      --accent: #5fd68a;
+      --accent-dim: #1c3327;
+      --amber: #e8a355;
+      --amber-dim: #34281a;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #12151a;
+    --surface: #171b22;
+    --surface-2: #1e232c;
+    --border: #2a303c;
+    --text: #dbe1ea;
+    --text-dim: #a9b2c2;
+    --muted: #6b7688;
+    --accent: #5fd68a;
+    --accent-dim: #1c3327;
+    --amber: #e8a355;
+    --amber-dim: #34281a;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent-dim); color: var(--text); }
+
+  a { color: var(--accent); }
+
+  code, .mono {
+    font-family: var(--mono);
+  }
+
+  /* ---- status bar ---- */
+  .statusbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: var(--status-h);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.02em;
+    color: var(--text-dim);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .statusbar .session {
+    color: var(--bg);
+    background: var(--accent);
+    padding: 0.15rem 0.55rem;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .statusbar .sep { color: var(--muted); }
+  .statusbar .spacer { flex: 1; }
+  .statusbar .clock { color: var(--muted); }
+
+  /* ---- shell ---- */
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ---- hero ---- */
+  .hero {
+    padding: 4.5rem 0 3rem;
+  }
+  .hero .prompt {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .hero .prompt .cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    background: var(--accent);
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .hero .prompt .cursor { animation: none; }
+  }
+  .hero h1 {
+    font-family: var(--mono);
+    font-size: clamp(1.9rem, 5vw, 2.7rem);
+    line-height: 1.15;
+    margin: 0 0 1rem;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero .sub {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 58ch;
+    margin: 0 0 1.6rem;
+  }
+  .hero .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+  .chip {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+  .chip.done { color: var(--accent); border-color: var(--accent-dim); }
+
+  /* ---- section scaffolding ---- */
+  section.block { padding: 2.6rem 0; border-top: 1px solid var(--border); }
+  section.block:first-of-type { border-top: none; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.6rem;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 1.3rem;
+    margin: 0 0 0.9rem;
+    text-wrap: balance;
+  }
+
+  p { color: var(--text-dim); margin: 0 0 1rem; max-width: 66ch; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ---- intro / arc ---- */
+  .arc p { font-size: 1rem; }
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.4rem;
+  }
+  @media (max-width: 560px) { .phases { grid-template-columns: 1fr; } }
+  .phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.1rem 1.2rem;
+  }
+  .phase .num { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.05em; }
+  .phase h3 { font-size: 0.98rem; margin: 0.3rem 0 0.4rem; font-family: var(--mono); }
+  .phase p { font-size: 0.88rem; margin: 0; }
+
+  /* ---- lesson cards ---- */
+  .lesson {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .lesson + .lesson { margin-top: 1.1rem; }
+  .lesson-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 1rem 1.3rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .lesson-head .idx {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .lesson-head h3 {
+    font-family: var(--mono);
+    font-size: 1rem;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .lesson-body { padding: 1.2rem 1.3rem 1.4rem; }
+
+  .floor {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    border-left: 2px solid var(--border);
+    padding-left: 0.9rem;
+    margin: 0 0 1.1rem;
+    font-style: italic;
+  }
+  .floor strong { font-style: normal; color: var(--text); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; display: block; margin-bottom: 0.3rem; }
+
+  .insight { font-size: 0.94rem; margin-bottom: 1rem; }
+  .insight strong { color: var(--text); }
+
+  .move {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 0.7rem;
+    font-size: 0.86rem;
+    margin-bottom: 1rem;
+  }
+  .move .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    height: fit-content;
+    white-space: nowrap;
+  }
+  .move .tag.junior { background: var(--surface-2); color: var(--muted); }
+  .move .tag.senior { background: var(--accent-dim); color: var(--accent); }
+  .move span:not(.tag) { color: var(--text-dim); }
+
+  .friction {
+    background: var(--amber-dim);
+    border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    font-size: 0.86rem;
+    color: var(--text-dim);
+    margin-top: 1rem;
+  }
+  .friction .flabel {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ---- config diff callout ---- */
+  .diffnote {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin: 1.4rem 0 0;
+    padding: 0.6rem 0.9rem;
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+  }
+  .diffnote .plus { color: var(--accent); }
+
+  /* ---- whats next ---- */
+  .next-list { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 1.2rem; }
+  .next-item {
+    display: flex;
+    gap: 0.9rem;
+    align-items: baseline;
+    padding: 0.85rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .next-item .idx { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); flex-shrink: 0; }
+  .next-item .body h4 { font-family: var(--mono); font-size: 0.9rem; margin: 0 0 0.2rem; }
+  .next-item .body p { font-size: 0.85rem; margin: 0; }
+
+  /* ---- footer ---- */
+  footer {
+    padding: 2.5rem 0 3.5rem;
+    border-top: 1px solid var(--border);
+  }
+  footer p { font-size: 0.82rem; color: var(--muted); font-family: var(--mono); }
+  footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <span class="session">terminal-craft</span>
+  <span class="sep">·</span>
+  <span>1:tmux</span>
+  <span>2:nvim</span>
+  <span class="spacer"></span>
+  <span class="clock">7/7 lessons · 2026-08-08</span>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="prompt">$ whoami<span class="cursor"></span></div>
+    <h1>Building <span class="accent">tmux</span> and <span class="accent">nvim</span> fluency, on purpose, for AI-coding work.</h1>
+    <p class="sub">A hands-on record of seven lessons — drilled live, not just read about — aimed at one thing: less friction reviewing and steering AI-generated code, at the keyboard, without breaking flow.</p>
+    <div class="meta">
+      <span class="chip done">7 / 7 lessons complete</span>
+      <span class="chip">eli5 teaching method</span>
+      <span class="chip">2 days, real friction included</span>
+    </div>
+  </section>
+
+  <section class="block arc">
+    <p class="eyebrow">Why this exists</p>
+    <h2>The keyboard is the bottleneck in AI-coding work — not the model.</h2>
+    <p>Heavy AI-coding sessions mean juggling multiple agents, reviewing long diffs, and jumping around large files fast. None of that is a model problem. It's a terminal-fluency problem — and it's fixable with the same tools that have existed for decades, used properly.</p>
+    <p>Terminal-Craft is a side project built to close that gap: real muscle memory in tmux for orchestrating concurrent AI-agent sessions, and in nvim for fast, confident editing and review — not a full IDE replacement, just fluency where it counts.</p>
+
+    <div class="phases">
+      <div class="phase">
+        <div class="num">PHASE 1</div>
+        <h3>tmux</h3>
+        <p>Sessions, windows, panes · detach/reattach across real disconnects · layouts for running multiple agents side-by-side.</p>
+      </div>
+      <div class="phase">
+        <div class="num">PHASE 2</div>
+        <h3>nvim</h3>
+        <p>Motions, registers, macros · multi-file navigation · search/replace · basic LSP — editing fluency, deliberately not a full IDE build-out.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">The method</p>
+    <h2>Every lesson starts with a real scenario, not a command list.</h2>
+    <p>Each lesson opens with a floor question — a concrete situation pulled from actual AI-coding work — then builds the answer one small step at a time, deriving the rule rather than just handing over syntax. Where something genuinely can't be derived (new syntax, a raw keystroke convention), it's taught directly and flagged as such. Every lesson ends with a hands-on drill, done live, not just discussed.</p>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">The lessons</p>
+    <h2>All seven, including what went wrong along the way.</h2>
+
+    <div class="lessons">
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">01</span><h3>Sessions, windows, panes</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>What has to be true, technically, for a running program to survive you closing the terminal window that started it?</p>
+          <p class="insight"><strong>Landed:</strong> Session = the process container that survives disconnect. Window = a full-screen switchable view, preserved untouched when unfocused. Pane = a simultaneously-visible split of one window. Rule of thumb: needs to survive and be returned to intact → new window. Needs to be seen at the same time, permanently → new pane.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Split a pane whenever something new comes up — fast, visually satisfying.</span>
+            <span class="tag senior">senior</span><span>Ask first: does this need to survive independently, or just be visible at the same time? Splitting wrong doesn't error — it quietly mutates the layout you meant to keep.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">Unplanned, but useful</span>
+            A follow-up question pushed past "the session keeps running" into where it actually runs — a real process tree on whichever machine started it. Laptop sleep pauses everything; shutdown kills the whole tmux server. That distinction is the entire reason unattended long jobs need a remote box, not a laptop.
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">02</span><h3>Detach / reattach in practice</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>SSH'd into a remote box running a long job in tmux. Wifi drops mid-session — not a clean detach, just gone. Does tmux know you left, and does it care?</p>
+          <p class="insight"><strong>Landed:</strong> A dropped connection and a clean detach look identical to tmux — it has no concept of "the connection died," only "the attached terminal went away." Reattaching is always the same command regardless of cause, because nothing ever needed special recovery.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Reach for <code>attach</code> as the default verb, even when starting something brand new.</span>
+            <span class="tag senior">senior</span><span><code>attach</code> only targets something that already exists. Ask first: does this session exist yet, or am I creating it right now?</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">03</span><h3>Layouts for multiple agents</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>Running two AI agents at once — one per project — watching both, glancing between, sometimes copying between them. Which construct holds each agent, and why?</p>
+          <p class="insight"><strong>Landed:</strong> The lesson plan gave way to a bigger, more honest question — "I understand window and pane, not session." The real rule: pane = same task, both visible at once. Window = different task, shared blast radius is fine. Session = different enough that a crash in one must never touch the other. Conclusion: one tmux session per project, windows for sub-tasks inside it — the same isolation principle already used for code repos, applied to the terminal.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Default to "more windows" for anything new.</span>
+            <span class="tag senior">senior</span><span>Ask about blast radius: would a crash here be acceptable to also take down that? If no, it's a new session.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">Caught live, on-camera</span>
+            Drilling the tiled layout for real, a claim from earlier in the lesson — "4 presets" — turned out to be wrong. Checking <code>tmux list-keys</code> against the actual config showed 5: even-horizontal, even-vertical, main-horizontal, main-vertical, tiled. Corrected on the spot, credited as a real catch, not smoothed over.
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">04</span><h3>Motions, registers, macros</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>Reviewing a long AI-generated diff — line 40, then 200, then back to 55. How do you move between them without breaking flow?</p>
+          <p class="insight"><strong>Landed:</strong> Motions are direct-targeting keystrokes (jump to a line, jump to a pattern). Registers are named clipboard slots that fix the one-slot overwrite problem. Macros aren't primarily about saving keystrokes — the real value is <strong>guaranteed identical execution on every repeat</strong>, so correctness doesn't quietly degrade on repeat nine of fifteen the way manual repetition does.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Justify macros as "saves keystrokes" — true, but doesn't explain why this beats manual repetition specifically.</span>
+            <span class="tag senior">senior</span><span>Consistency under repetition is the actual value — AI-code review often means the same fix, applied uniformly, everywhere it's needed.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">The hard one</span>
+            The first live attempt exposed a real gap: mode-switching and undo had never been taught, despite being more foundational than anything else in the lesson. A confusion cascade followed — a terminal's own UI chrome was masking vim's mode indicator, and the real signal turned out to be cursor shape, not status text. A genuine "I don't know how to undo this" moment got resolved with one command (<code>u</code>). The session paused there on purpose, and resumed later with mode-switching and undo taught first, from zero.
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">05</span><h3>Multi-file navigation</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>One file calls a function; the function it's actually calling lives in another file and does something unexpected. Check the other file, then come back — without losing your place.</p>
+          <p class="insight"><strong>Landed:</strong> Split-and-load shows two files at once when you genuinely need both visible. A direct buffer swap replaces what's on screen with no split at all, for a quick look-and-return. The choice between them isn't a fixed rule — it's a judgment call.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Split every time you need to check another file — works, but clutters the screen.</span>
+            <span class="tag senior">senior</span><span>Same question as the pane-vs-window rule from Lesson 3: do I need both visible at once, or am I just hopping over and back?</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">06</span><h3>Search / replace</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>The same variable name is scattered across an entire file and needs to change everywhere. Macros could do it — what's the problem, and is there something more direct?</p>
+          <p class="insight"><strong>Landed:</strong> A whole-file substitute changes every match with zero per-occurrence navigation — a fundamentally different move from a macro, which still requires walking to each match even once the edit itself is automated. A confirm-each-match variant adds a review step for anything you're not fully sure about — the same shape as reviewing a diff hunk by hunk before staging it.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Reach for a macro whenever the same text needs to change everywhere.</span>
+            <span class="tag senior">senior</span><span>Recognize "same pattern, everywhere in the file" as its own case — skip navigation entirely, save macros for edits that aren't a pure text swap.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">07</span><h3>Basic LSP</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>Jumping to a definition, so far, has meant manually opening a file and eyeballing it. What if the editor actually understood the code's structure instead of just matching text?</p>
+          <p class="insight"><strong>Landed:</strong> A language server gives real structural understanding — jump-to-definition that's instant and correct, across files, because the tool knows what a symbol actually is. But the sharper insight: a type-checker's silence is not proof of correctness. It caught a real introduced bug instantly — but the file's actual pre-existing bug, a parameter no caller ever passed, was invisible to it the entire time. That's not a flaw in the tool; it's a different, harder problem than type-checking.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Treat "find the definition" as a manual search problem, even with a language server available.</span>
+            <span class="tag senior">senior</span><span>Reach for the structural jump first — and separately, know exactly what a clean type-check does and doesn't guarantee.</span>
+          </div>
+          <div class="friction">
+            <span class="flabel">The only real setup, on purpose</span>
+            This was the sole lesson requiring actual configuration — a language server installed, wired into the editor for the first time. Every prior lesson ran on a completely untouched baseline. The one real bug in the practice code was deliberately introduced and confirmed live: the tool caught the fake bug instantly, and never once flagged the real one.
+          </div>
+          <div class="diffnote"><span class="plus">+44 lines</span> the only config change across all seven lessons</div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">What's next</p>
+    <h2>The curriculum extends — bash, CLI tools, dotfiles as a real system.</h2>
+    <p>The seven-lesson core is done. The same method continues into the shell layer everything else runs on top of.</p>
+    <div class="next-list">
+      <div class="next-item">
+        <span class="idx">08</span>
+        <div class="body">
+          <h4>Shell fundamentals + history</h4>
+          <p>Aliases, functions, PATH, config load order, reverse history search, job control — the foundational layer everything else sits on.</p>
+        </div>
+      </div>
+      <div class="next-item">
+        <span class="idx">09</span>
+        <div class="body">
+          <h4>Modern CLI tools</h4>
+          <p>Why each faster, friendlier replacement earns its place over the classic Unix tool it stands in for — fluency, not just having them installed.</p>
+        </div>
+      </div>
+      <div class="next-item">
+        <span class="idx">10</span>
+        <div class="body">
+          <h4>Dotfiles as a managed system</h4>
+          <p>Shell config, git config, aliases — a real symlink strategy, what's version-controlled versus machine-local, and how secrets stay out of it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>terminal-craft · <a href="https://github.com/joaoblasques/terminal-craft">source on GitHub</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
