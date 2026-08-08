@@ -38,3 +38,10 @@ Already covered by this repo's core purpose — symlink `tmux.conf` and
 3. `xargs -L 1 -I {} sh -c '{}' < mas.txt` (sign into Apple ID first)
 4. Symlink dotfiles (`tmux.conf`, `nvim/init.lua`)
 5. Check `APPS.md` for anything still missing
+6. **Before blindly reinstalling everything from step 2-3: prune.** `mdls
+   kMDItemLastUsedDate` on the old machine is unreliable (returns null for most
+   apps even when actively used — confirmed 2026-08-08, don't trust it). Instead,
+   go through `Brewfile`'s casks and `mas.txt`'s App Store apps by memory and only
+   reinstall what you'd actually reach for on the new machine — this is the natural
+   moment to prune, since "do I need this on my new Mac" is a much easier question
+   than "have I used this in 2 years" in the abstract.
