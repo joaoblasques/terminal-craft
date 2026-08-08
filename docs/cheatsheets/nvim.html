@@ -203,6 +203,22 @@
   </section>
 
   <section>
+    <h2>netrw (file browser)</h2>
+    <p style="color: var(--text-dim); font-size: 0.88rem; margin: 0 0 0.9rem;">Built into nvim — no plugin required. Not a persistent sidebar; each command opens a full directory listing that replaces or splits your current buffer.</p>
+    <dl>
+      <dt><code>:Ex</code></dt><dd>open netrw in the current window (replaces buffer, like <code>:e</code> but browsable)</dd>
+      <dt><code>:Vex</code></dt><dd>open netrw in a vertical split (like <code>:vsp</code>)</dd>
+      <dt><code>:Sex</code></dt><dd>open netrw in a horizontal split (like <code>:sp</code>)</dd>
+      <dt><code>Enter</code> (on a file)</dt><dd>open it in the netrw window</dd>
+      <dt><code>%</code></dt><dd>create a new file at the current netrw location</dd>
+      <dt><code>d</code></dt><dd>create a new directory</dd>
+      <dt><code>D</code></dt><dd>delete the file/directory under the cursor (confirms first)</dd>
+      <dt><code>R</code></dt><dd>rename the file/directory under the cursor</dd>
+    </dl>
+    <div class="note">No persistent panel and no git-status-in-tree — for that, a plugin (<code>nvim-tree</code>, <code>neo-tree</code>, <code>oil.nvim</code>) is required, out of scope for this vanilla-nvim setup.</div>
+  </section>
+
+  <section>
     <h2>Mode indicator (Warp/tmux specific)</h2>
     <p style="color: var(--text-dim); font-size: 0.9rem; margin: 0;">Cursor SHAPE is the real signal: thin bar = insert mode, solid block = normal mode. The text status line at the bottom does not show a mode name in this setup — go by cursor shape, not status-line text.</p>
   </section>

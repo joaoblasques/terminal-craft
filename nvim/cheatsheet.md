@@ -86,6 +86,21 @@ nvim's built-in `vim.lsp` client (0.10+).
   caller actually passes this parameter" — that requires tracing actual call sites,
   which is a different (harder) problem than type-checking a single file.
 
+## netrw (file browser)
+Built into nvim — no plugin required. Not a persistent sidebar; each command opens a
+full directory listing that replaces or splits your current buffer.
+- `:Ex` — open netrw in the current window (replaces buffer, like `:e` but browsable)
+- `:Vex` — open netrw in a vertical split (like `:vsp`)
+- `:Sex` — open netrw in a horizontal split (like `:sp`)
+- `Enter` (on a file) — open it in the netrw window
+- `%` — create a new file at the current netrw location
+- `d` — create a new directory
+- `D` — delete the file/directory under the cursor (confirms first)
+- `R` — rename the file/directory under the cursor
+- Limitation: no persistent panel and no git-status-in-tree — for that, a plugin
+  (`nvim-tree`, `neo-tree`, `oil.nvim`) is required, which is out of scope for this
+  vanilla-nvim setup.
+
 ## Mode indicator (Warp/tmux specific)
 - Cursor SHAPE is the real signal: thin bar = insert mode, solid block = normal mode.
   Text status line at the bottom (`file [+] row,col  pct%`) does not show mode name in
