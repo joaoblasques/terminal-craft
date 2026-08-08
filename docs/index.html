@@ -194,11 +194,11 @@
   .arc p { font-size: 1rem; }
   .phases {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-top: 1.4rem;
   }
-  @media (max-width: 560px) { .phases { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .phases { grid-template-columns: 1fr; } }
   .cheatlinks {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -349,7 +349,7 @@
   <span>2:nvim</span>
   <span class="spacer"></span>
   <a href="cheatsheets/tmux.html" style="color: var(--text-dim); text-decoration: none;">cheatsheets</a>
-  <span class="clock">7/7 lessons · 2026-08-08</span>
+  <span class="clock">9/10 lessons · 2026-08-08</span>
 </div>
 
 <div class="wrap">
@@ -359,7 +359,7 @@
     <h1>Building <span class="accent">tmux</span> and <span class="accent">nvim</span> fluency, on purpose, for AI-coding work.</h1>
     <p class="sub">A hands-on record of seven lessons — drilled live, not just read about — aimed at one thing: less friction reviewing and steering AI-generated code, at the keyboard, without breaking flow.</p>
     <div class="meta">
-      <span class="chip done">7 / 7 lessons complete</span>
+      <span class="chip done">9 / 10 lessons complete</span>
       <span class="chip">eli5 teaching method</span>
       <span class="chip">2 days, real friction included</span>
     </div>
@@ -382,6 +382,11 @@
         <h3>nvim</h3>
         <p>Motions, registers, macros · multi-file navigation · search/replace · basic LSP — editing fluency, deliberately not a full IDE build-out.</p>
       </div>
+      <div class="phase">
+        <div class="num">PHASE 3</div>
+        <h3>Shell + dotfiles</h3>
+        <p>History, aliases, functions, PATH · why modern CLI tools replace their classic-Unix predecessors · a real Mac-to-Mac migration system.</p>
+      </div>
     </div>
   </section>
 
@@ -393,7 +398,7 @@
 
   <section class="block">
     <p class="eyebrow">The lessons</p>
-    <h2>All seven, including what went wrong along the way.</h2>
+    <h2>All nine so far, including what went wrong along the way.</h2>
 
     <div class="lessons">
 
@@ -494,7 +499,31 @@
             <span class="flabel">The only real setup, on purpose</span>
             This was the sole lesson requiring actual configuration — a language server installed, wired into the editor for the first time. Every prior lesson ran on a completely untouched baseline. The one real bug in the practice code was deliberately introduced and confirmed live: the tool caught the fake bug instantly, and never once flagged the real one.
           </div>
-          <div class="diffnote"><span class="plus">+44 lines</span> the only config change across all seven lessons</div>
+          <div class="diffnote"><span class="plus">+44 lines</span> the only config change in the tmux/nvim curriculum</div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">08</span><h3>Shell fundamentals + history</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong>You run a command, then a minute later want to run something almost identical — just tweak one flag. What do you actually do?</p>
+          <p class="insight"><strong>Landed:</strong> Reverse history search (type a fragment, jump straight to the most recent match) beats counting arrow-key presses. An alias is pure text substitution — no logic, no arguments, only expands at the start of a line. A function is real code — takes arguments, chains commands — for anything an alias can't express. PATH is an ordered, colon-separated list; first match wins, silently, which is why a newer tool can quietly lose to an older one shadowing it. Config files load once, at shell startup — <code>source</code> reapplies changes to a live shell without starting over.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Open a new terminal every time a config change needs to take effect.</span>
+            <span class="tag senior">senior</span><span>Reach for <code>source ~/.zshrc</code> first — reload in place, keep your session state.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="lesson">
+        <div class="lesson-head"><span class="idx">09</span><h3>Modern CLI tools</h3></div>
+        <div class="lesson-body">
+          <p class="floor"><strong>Floor question</strong><code>ls -la</code> and a git-aware listing both show files in a directory. What's actually different about what the modern tool can show — and why?</p>
+          <p class="insight"><strong>Landed:</strong> One pattern, confirmed four separate times. A git-aware lister queries git per-file because it was built to; plain <code>ls</code> predates git entirely and has no way to ask. A gitignore-aware search tool skips <code>node_modules/</code> automatically; <code>grep</code> has no concept of a gitignore file. A frecency-ranked directory jumper remembers what you actually use; <code>cd</code> has no memory at all. A structural JSON tool addresses a field by its real path; a text search tool can only pattern-match, and breaks the moment the file is minified onto one line.</p>
+          <div class="move">
+            <span class="tag junior">junior</span><span>Modern CLI tools are just faster, nicer-looking versions of the classics.</span>
+            <span class="tag senior">senior</span><span>They add context — version control state, ignore rules, usage history, data structure — that the tools they replace were built before that context existed, and structurally cannot see.</span>
+          </div>
         </div>
       </article>
 
@@ -526,28 +555,14 @@
 
   <section class="block">
     <p class="eyebrow">What's next</p>
-    <h2>The curriculum extends — bash, CLI tools, dotfiles as a real system.</h2>
-    <p>The seven-lesson core is done. The same method continues into the shell layer everything else runs on top of.</p>
+    <h2>One lesson left — dotfiles as a real migration system.</h2>
+    <p>Not just symlinked config files: a Brewfile capturing every formula and cask, <code>mas</code> for Mac App Store apps by ID, and a plain checklist only for the rare install with no package-manager path at all. The goal is standing up a brand new Mac fast, not just keeping one machine's config tidy.</p>
     <div class="next-list">
-      <div class="next-item">
-        <span class="idx">08</span>
-        <div class="body">
-          <h4>Shell fundamentals + history</h4>
-          <p>Aliases, functions, PATH, config load order, reverse history search, job control — the foundational layer everything else sits on.</p>
-        </div>
-      </div>
-      <div class="next-item">
-        <span class="idx">09</span>
-        <div class="body">
-          <h4>Modern CLI tools</h4>
-          <p>Why each faster, friendlier replacement earns its place over the classic Unix tool it stands in for — fluency, not just having them installed.</p>
-        </div>
-      </div>
       <div class="next-item">
         <span class="idx">10</span>
         <div class="body">
-          <h4>Dotfiles as a managed system</h4>
-          <p>Shell config, git config, aliases — a real symlink strategy, what's version-controlled versus machine-local, and how secrets stay out of it.</p>
+          <h4>Dotfiles as a Mac-to-Mac migration system</h4>
+          <p>Brewfile (formulae + casks), <code>mas</code>-cli for App Store apps, an APPS.md checklist for manual-only installs, plus shell/git config — real symlink strategy, what's version-controlled vs. machine-local, secrets handling.</p>
         </div>
       </div>
     </div>

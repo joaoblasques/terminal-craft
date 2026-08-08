@@ -50,3 +50,19 @@ Open in a split from nvim: `:sp ~/Dev/terminal-craft/shell/cheatsheet.md`
 - `fg` — resume the most recently suspended/backgrounded job in the foreground
 - `bg` — resume the most recently suspended job, but in the background
 - `jobs` — list all background/suspended jobs for this shell session
+
+## Modern CLI tools
+The pattern across all of these: they add context (git state, ignore rules, usage
+history, data structure) that the classic Unix tool they replace predates and
+structurally cannot see.
+- `eza -la --git --no-icons` — like `ls -la`, but git-aware (queries git per-file,
+  shows modified/staged/untracked status inline)
+- `rg <pattern>` — like `grep -r`, but automatically respects `.gitignore` (skips
+  `node_modules/`, build artifacts, etc. with no flags needed)
+- `fd <pattern>` — like `find`, but gitignore-aware and simpler syntax
+- `bat <file>` — like `cat`, but with syntax highlighting and git-diff markers in the
+  margin (`bat --plain` for raw output)
+- `z <fragment>` (zoxide) — like `cd`, but ranks past directories by frecency
+  (frequency + recency) and jumps via fuzzy match — `cd` has no memory, `zoxide` does
+- `jq '.path.to.field'` — parses actual JSON structure (objects/arrays/nesting) instead
+  of matching text, so it survives minified/reformatted JSON that would break `grep`
