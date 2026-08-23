@@ -17,5 +17,5 @@ editing/review fluency (nvim) for heavy AI-coding work.
 - After any edit, reload live: `tmux source-file ~/.tmux.conf` (tmux) or restart nvim (nvim).
 
 ## Reference
-- Vault brain: `~/Dev/second-brain/02_Areas/Side Projects/Terminal-Craft/`
-- Design spec: `~/Dev/second-brain/docs/superpowers/specs/2026-08-06-terminal-craft-design.md`
+- Vault brain: `~/Dev/AIOS/20_Areas/Side Projects/Terminal-Craft/`
+- Design spec: `~/Dev/AIOS/docs/superpowers/specs/2026-08-06-terminal-craft-design.md`
